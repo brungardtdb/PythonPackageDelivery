@@ -5,8 +5,6 @@ import Package_Delivery.delivery_truck as delivery_truck
 # class to manage the delivering of packages
 class DeliveryService:
 
-    # Time: O(1)
-    # Space: O(n/16) which is still just O(n) to account for number of trucks
     def __init__(self, package_repo):
         self.repo = package_repo
         self.first_truck = delivery_truck.DeliveryTruck()
@@ -20,20 +18,18 @@ class DeliveryService:
         self.delivered_packages = []
 
     # method for delivering all packages on all delivery trucks
-    # Time: O((n^2 * (n + v + (v^2 + v * e) + (v + e + (v^2 + v * e)) + v + n)
-    # Space: O((v^2 + v * e) + n * (v + e) + n) + (v^2 + v * e))
     def deliver_packages(self, graph):
         # load truck one and deliver all packages
-        self._load_truck_one()                                                   # -> Time: O(n) Space: O(n)
+        self._load_truck_one()
         first_start_time = datetime.strptime('8:00', '%H:%M').time()
         self.first_truck.deliver_all_packages(graph, first_start_time, True)
         # load truck two and deliver all packages
-        self._load_truck_two()                                                   # -> Time: O(n) Space: O(n)
+        self._load_truck_two()
         second_start_time = datetime.strptime('9:05', '%H:%M').time()
         self.second_truck.deliver_all_packages(graph, second_start_time, False)
         # load truck three and deliver all packages after correcting
         # incorrect package address
-        self._load_truck_three()                                                 # -> Time: O(n) Space: O(n)
+        self._load_truck_three()
         earliest_possible_time = datetime.strptime('10:20', '%H:%M').time()
         third_start_time = self.first_truck.finish_time \
             if self.first_truck.finish_time > earliest_possible_time \
@@ -42,8 +38,6 @@ class DeliveryService:
         self.third_truck.deliver_all_packages(graph, third_start_time, False)
 
     # method for loading a package onto a delivery truck
-    # Time: O(n) to look through packages on truck to ensure we don't add package twice
-    # Space: O(n) to add the id of each package to the list of delivered packages
     def _load_package_on_truck(self, pkg, truck):
         if pkg.id in self.delivered_packages:
             return
@@ -51,8 +45,6 @@ class DeliveryService:
         self.delivered_packages.append(pkg.id)
 
     # extremely ad hoc method for loading truck 1
-    # Time: O(n) to call load_package_on_truck once for at most 16 packages
-    # Space: O(n) to add each package id at most once to list
     def _load_truck_one(self):
         packages = [
             self.repo.get_package_by_id(1),
@@ -76,8 +68,6 @@ class DeliveryService:
             self._load_package_on_truck(p, self.first_truck)
 
     # extremely ad hoc method for loading truck 2
-    # Time: O(n) to call load_package_on_truck once for at most 16 packages
-    # Space: O(n) to add each package id at most once to list
     def _load_truck_two(self):
         packages = [
             self.repo.get_package_by_id(2),
@@ -101,8 +91,6 @@ class DeliveryService:
             self._load_package_on_truck(p, self.second_truck)
 
     # extremely ad hoc method for loading truck 3
-    # Time: O(n) to call load_package_on_truck once for at most 16 packages
-    # Space: O(n) to add each package id at most once to list
     def _load_truck_three(self):
         packages = [
             self.repo.get_package_by_id(9),
@@ -118,8 +106,6 @@ class DeliveryService:
             self._load_package_on_truck(p, self.third_truck)
 
     # extremely ad hoc method for correcting incorrect address on package 9
-    # Time: O(1) to correct the address
-    # Space: O(1)
     def _correct_incorrect_package_address(self):
         # eventually these will need to come from a file or database
         # so this is less ad hoc
@@ -132,8 +118,6 @@ class DeliveryService:
             pkg.city = correct_city
 
     # method to get truck mileage
-    # Time: O(1)
-    # Space: O(1)
     def get_truck_mileage(self, truck_id):
         match truck_id:
             case self.first_truck.truck_id:
@@ -146,8 +130,6 @@ class DeliveryService:
                 return None
 
     # method to get mileage for all trucks
-    # Time: O(n) since # of trucks is influenced by # of packages
-    # Space: O(1)
     def get_total_truck_mileage(self):
         total = 0.0
         for truck in self.delivery_trucks:

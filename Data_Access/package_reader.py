@@ -19,8 +19,6 @@ def _string_to_time(t):
 # retrieves all packages from "WGUPS Package File.csv" file and returns packages in a list
 def get_packages(file=file_name):
 
-    # Time: O(n) linear time to read each line of the package file
-    # Space: O(n) linear space to create an entry in the hash map for every package
     index = 0
     # open csv file and read through each line, skipping first 8 (these are irrelevant)
     with open(file, 'r') as csv_file:
@@ -51,8 +49,6 @@ def get_packages(file=file_name):
 
 # counts all packages in "WGUPS Package File.csv"
 def __get_num_packages(file=file_name):
-    # Time: O(n) linear time to read each line of the package file and count the packages
-    #  Space: O(1) constant space, we are only incrementing a single counter
     index = 0
     num_packages = 0
     # open csv file and read through each line, skipping first 8 (these are irrelevant)

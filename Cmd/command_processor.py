@@ -3,8 +3,6 @@ import User_Time.user_time as ut
 
 
 # function that validates if the command a user has entered is valid
-# Time: O(1)
-# Space: O(n)
 def command_is_valid(cmd):
     segs = cmd.split(" ")
     c = segs[0].lower()
@@ -36,30 +34,26 @@ def command_is_valid(cmd):
 
 
 # function that processes pstatus command
-# Time: O(n + n^2)
-# Space: O(n)
 def process_pstatus(cmd, package_repo):
     segs = cmd.split(" ")
     # get user requested time
     time_segs = segs[2].split("=")
     t = time_segs[1] + " " + segs[3]
-    time = ut.get_user_defined_time(t)  # O(n), O(n)
+    time = ut.get_user_defined_time(t)
     id_segs = segs[1].split("=")
     id_arg = id_segs[0].lower()
     # determine if all packages requested or a single package
     if id_arg == "-all":  # if user requests status for all packages
         print("Status for all packages at " + t)
-        ps.get_status_of_all_packages_at_time(package_repo, time)  # O(n^2), O(1)
+        ps.get_status_of_all_packages_at_time(package_repo, time)
     elif id_arg == "-id":  # if user requests status for a specific package
         pkgid = int(id_segs[1])
-        p = package_repo.get_package_by_id(pkgid)  # O(n), O(1)
+        p = package_repo.get_package_by_id(pkgid)
         print("Status for package " + str(pkgid) + " at " + t)
         ps.get_package_at_time(p, time)
 
 
 # prints command line help instructions
-# Time: O(1)
-# Space: O(1)
 def print_help():
     print("Usage: COMMAND [ARG...]")
     print("To view all packages at a given time, enter: ")

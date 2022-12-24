@@ -3,15 +3,11 @@ import math
 
 # class to represent location graph
 class Graph:
-    # Time: O(v)
-    # Space: O(v + e)
     def __init__(self, num_nodes):
         self.num_nodes = num_nodes
         self.map = HashMap(num_nodes)
 
     # method for getting node from graph
-    # Time: O(v)
-    # Space: O(1)
     def get_node(self, node_id):
         node = self.map.get_item(node_id)
         if node is None:
@@ -20,14 +16,10 @@ class Graph:
         return node
 
     # method for adding node to graph
-    # Time: O(v)
-    # Space: O(1)
     def add_node(self, node):
         self.map.append_item(node.id, node)
 
     # method for adding edge to graph
-    # Time: O(v + e) to traverse all nodes and edges
-    # Space: O(1) to add a single edge
     def add_edge(self, edge):
         #  prefer node with the lowest id #
         lowest_node = edge.first_node if edge.first_node.id < edge.second_node.id else edge.second_node
@@ -35,29 +27,29 @@ class Graph:
 
         #  ensure nodes exist
         if self.map.get_item(lowest_node.id) is None:
-            self.add_node(lowest_node)  # O(v), O(1)
+            self.add_node(lowest_node)
         if self.map.get_item(highest_node.id) is None:
-            self.add_node(highest_node)  # O(v), O(1)
+            self.add_node(highest_node)
 
         #  get list in hashmap where node is stored
-        first_node = self.map.get_item(lowest_node.id)  # O(v), O(1)
-        second_node = self.map.get_item(highest_node.id)  # O(v), O(1)
+        first_node = self.map.get_item(lowest_node.id)
+        second_node = self.map.get_item(highest_node.id)
         #  check if node already exists
         first_existing_edge = any(((lowest_node.id == edge.first_node.id)
                                   or (lowest_node.id == edge.second_node.id))
                                   and ((highest_node.id == edge.first_node.id)
                                   or (highest_node.id == edge.second_node.id))
-                                  for edge in first_node.edges)  # O(e), O(1)
+                                  for edge in first_node.edges)
         second_existing_edge = any(((lowest_node.id == edge.first_node.id)
                                    or (lowest_node.id == edge.second_node.id))
                                    and ((highest_node.id == edge.first_node.id)
                                    or (highest_node.id == edge.second_node.id))
-                                   for edge in second_node.edges)  # O(e), O(1)
+                                   for edge in second_node.edges)
         # add edge to node edge list
         if not first_existing_edge:
-            first_node.edges.append(edge) # O(1), O(1)
+            first_node.edges.append(edge)
         if not second_existing_edge:
-            second_node.edges.append(edge) # O(1), O(1)
+            second_node.edges.append(edge)
 
     # here lies several days of my available time to write this program
     # tragically I did not end up using this

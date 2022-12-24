@@ -2,8 +2,6 @@ import Enums.delivery_status
 
 
 # function that displays the full status of a package at a given time
-# Time: O(1)
-# Space: O(1)
 def get_package_at_time(pkg, time):
     print("Package ID: \t\t" + str(pkg.id))
     print("Delivery Address: \t" + pkg.address)
@@ -17,20 +15,16 @@ def get_package_at_time(pkg, time):
 
 
 # function that displays a summarized status of all packages at a given time
-# Time: O(n^2)
-# Space: O(1)
 def get_status_of_all_packages_at_time(package_repo, time):
     print_table_header_for_packages()
-    for index in range(package_repo.packages.map_length):  # O(n)
+    for index in range(package_repo.packages.map_length):
         index += 1
-        p = package_repo.get_package_by_id(index)  # O(n), O(1)
+        p = package_repo.get_package_by_id(index)
         display_package_status(p, time)
 
 
 # function for printing the table header when displaying status summary
 # for all delivered packages
-# Time: O(1)
-# Space: O(1)
 def print_table_header_for_packages():
     print("Package ID: \tDelivery Address "
           "\t\t\t\t\t\t\tDelivery Status "
@@ -40,8 +34,6 @@ def print_table_header_for_packages():
     print()
 
 # function that displays a summarized package status at a given time
-# Time: O(1)
-# Space: O(1)
 def display_package_status(pkg, time):
     status_at_time = get_delivery_status_at_time(pkg, time)
     s = get_status_string(status_at_time)
@@ -59,8 +51,6 @@ def display_package_status(pkg, time):
 
 
 # function that converts delivery status to a string
-# Time : O(1)
-# Space: O(1)
 def get_status_string(status):
     match status:
         case Enums.delivery_status.DeliveryStatus.DELIVERED:
@@ -72,8 +62,6 @@ def get_status_string(status):
 
 
 # Gets the delivery status of a package at a given time
-# Time: O(1)
-# Space: O(1)
 def get_delivery_status_at_time(package, time):
     if time < package.start_time:
         return Enums.delivery_status.DeliveryStatus.AT_THE_HUB

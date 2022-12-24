@@ -1,8 +1,5 @@
 class HashMap:
 
-    # Time: O(n) to add empty list to hash map for each index
-    # Space: O(n) add an empty list to each slot in hash map
-    # to handle the case where multiple items have the same index
     def __init__(self, map_length):
         self.map_length = map_length
         self.map = []
@@ -12,11 +9,6 @@ class HashMap:
             self.map.append([])
 
     # Method used to retrieve item from hash map
-    # Time: O(n) is the worst case, in the event that all items share the same index
-    # Big-O accounts for the upper-bound, but I feel the average/best case of O(1) is worth mentioning
-    # Provided each item in the hash map has its own index
-    # Space: O(1), constant time for variables used to find item in hash map
-    # we will not add additional storage beyond items that are already in hash map
     def get_item(self, key):
         index = key % self.map_length
         map_slot = self.map[index]
@@ -29,10 +21,6 @@ class HashMap:
         return None  # just to be safe, return none if not found, previous check should account for this
 
     # Method used to add item to hash map
-    # Time: O(n) is the worst case, in the event that all items share the same index
-    # Big-O accounts for the upper-bound, but I feel the average/best case of O(1) is worth mentioning
-    # Provided each item in the hash map has its own index
-    # Space: O(1), for each item passed into method, we will only add one item
     def append_item(self, key, item):
         index = key % self.map_length
         map_slot = self.map[index]
@@ -43,11 +31,6 @@ class HashMap:
         return False  # if item with that key already exists and append is unsuccessful
 
     # Method used to remove item from hash map
-    # Time: O(n) is the worst case, in the event that all items share the same index
-    # Big-O accounts for the upper-bound, but I feel the average/best case of O(1) is worth mentioning
-    # Provided each item in the hash map has its own index
-    # Space: O(1), constant time for variables used to find item in hash map
-    # we will not add additional storage beyond items that are already in hash map
     def remove_item(self, key):
         index = key % self.map_length
         map_slot = self.map[index]

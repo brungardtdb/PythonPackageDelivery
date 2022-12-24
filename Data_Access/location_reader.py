@@ -9,8 +9,6 @@ file_name = "Data/WGUPS Distance Table.csv"
 # retrieves all locations from "WGUPS Distance Table.csv" file and returns locations in a graph
 def get_locations():
     # using V to represent locations as vertices on a graph, so we can track locations separate from packages.
-    # Time: O(v^2) to loop through each location for all given locations to find vertices and connecting edges
-    # Space: O(v + e) where v is each location stored as a vertex and e is a connecting edge between vertices
     index = 0
     location_id = 1
     # loop through rows in csv file to create graph from distance list
@@ -66,8 +64,6 @@ def get_locations():
 
 # counts all the locations in "WGUPS Distance Table.csv"
 def _get_num_locations():
-    #  Time: O(v) linear time to read each line of the distance table and count them
-    #  Space: O(1) constant space, we are only incrementing a single counter
     index = 0
     num_locations = 0
     # open csv file and read through each line, skipping first 8 (these are irrelevant)

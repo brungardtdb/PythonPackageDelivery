@@ -4,8 +4,6 @@ import Enums.delivery_status
 
 
 # updates package status to reflect that package has been delivered
-# Time: O(1)
-# Space: O(1)
 def _update_package_status(pkg, delivery_time):
     pkg.delivery_time = delivery_time
     pkg.delivery_status = Enums.delivery_status.DeliveryStatus.DELIVERED
@@ -13,8 +11,6 @@ def _update_package_status(pkg, delivery_time):
 
 # helper method to indicate whether shortest path was found
 # adds edges for shortest path to path_to_dest list
-# Time: O(v + e) in the case that each vertex and edge exists in potential path
-# Space: O(v + e) in the case that all vertices and edges are added to path
 def _shortest_path_found(potential_paths, path_to_dest):
     chosen_path = None
     lowest_cost = math.inf
@@ -37,8 +33,6 @@ def _shortest_path_found(potential_paths, path_to_dest):
 # class used to manage delivering packages
 class DeliveryTruck:
 
-    # Time: O(1)
-    # Space: O(1)
     def __init__(self):
         self.packages = []
         self.delivered_packages = []
@@ -57,8 +51,6 @@ class DeliveryTruck:
         self.truck_id = 0
 
     # method for adding a package to the truck
-    # Time: O(1) to update package and add to truck
-    # Space: O(1) since we are capped at 16 packages and this will not grow with the # of packages on a given truck
     def add_package_to_truck(self, package):
         # make sure we are within capacity, add package to truck if we are
         if self.is_full:
@@ -71,11 +63,9 @@ class DeliveryTruck:
             self.is_full = True
 
     # method for delivering all packages on truck
-    # Time: O((n^2 * (n + v + (v^2 + v * e) + (v + e + (v^2 + v * e)) + v + n)
-    # Space: O((v^2 + v * e) + n * (v + e) + n) + (v^2 + v * e))
     def deliver_all_packages(self, graph, start_time, return_to_hub):
         # start at hub
-        hub = graph.get_node(1)             # O(v), O(1)
+        hub = graph.get_node(1)
         self.delivered_packages = []
         self.visited_nodes = []
         self.current_node = hub
@@ -83,34 +73,27 @@ class DeliveryTruck:
         self.graph = graph
         self.start_time = start_time
         self.current_time = start_time
-        # set start time for all packages
-        for pkg in self.packages:           # O(n), O(1)
+        # set start time for all packages and deliver packages
+        for pkg in self.packages:
             pkg.start_time = self.start_time
-
-        self._deliver_packages(self.packages)  # Time: O(n^2 * (n + v + (v^2 + v * e)) + v + e)
-                                               # Space: O(v^2 + v * e) + n * (v + e) + n)
-        if return_to_hub:  # Time:  O(v + e + (v^2 + v * e)) Space: O(v * (v + e))
+        self._deliver_packages(self.packages)
+        if return_to_hub:
             self._return_to_hub()  # leave the other two trucks at the location of the last delivery
             # returning these trucks to the hub is not cost-effective, we will just get two new trucks
             # for tomorrow's delivery
 
     # method to return truck to hub
-    # Time: O(v + e + (v^2 + v * e))
-    # Space: O(v * (v + e))
     def _return_to_hub(self):
-        hub = self.graph.get_node(1)  # O(v), O(1)
+        hub = self.graph.get_node(1)
         path_to_hub = []
         # if shortest path to hub has been found, return to hub
-        # Time: O(v * (v + e)) Space: O(v * (v + e))
         if self._pkg_dest_found(self.current_node, hub.data.location_address, path_to_hub):
-            self._go_to_hub(path_to_hub)  # O(e), O(1)
+            self._go_to_hub(path_to_hub)
 
     # method to return truck to hub
-    # Time: O(e)
-    # Space: O(1)
     def _go_to_hub(self, path_to_hub):
         # move through each edge on the way back to the hub, calculating time and mileage for each
-        for edge in path_to_hub:  # O(e)
+        for edge in path_to_hub:
             self.current_node = edge.first_node if edge.first_node.id is not self.current_node.id else edge.second_node
             self._calculate_time(edge.weight)
         # reset truck state
@@ -119,58 +102,52 @@ class DeliveryTruck:
         self.is_full = False
 
     # method for delivering packages
-    # Time: O(n^2 * (n + v + (v^2 + v * e)) + v + e)
-    # Space: O(v^2 + v * e) + n * (v + e) + n)
     def _deliver_packages(self, pkgs):
         # loop until all packages are delivered
-        while len(self.delivered_packages) < self.num_packages:  # O(n)
+        while len(self.delivered_packages) < self.num_packages:
             pkg_tracker = []
             # loop through packages, finding the closest one to deliver
-            for pkg in pkgs:                          # O(n)
+            for pkg in pkgs:
                 path_to_dest = []
                 # skip package if already delivered
-                if pkg.id in self.delivered_packages:  # O(n)
-                    continue                                                         # Time: O(v + (v * (v + e)))
+                if pkg.id in self.delivered_packages:
+                    continue
                     # if we find route to package, add it to package tracker
-                if self._package_route_found(self.current_node, pkg, path_to_dest):  # Space: O(v * (v + e))
-                    pkg_tracker.append((pkg, path_to_dest))  # Space: O(n * (v + e)) in the event entire graph is stored
-                    self.visited_nodes = []                  # for each package
+                if self._package_route_found(self.current_node, pkg, path_to_dest):
+                    pkg_tracker.append((pkg, path_to_dest))
+                    self.visited_nodes = []
                 else:
-                    #  could not find route
+                    # could not find route
                     self.visited_nodes = []
                     print("Could not deliver package")
                     print("Package ID: " + str(pkg.id))
                     print("Package Address: " + pkg.address)
                     continue
             # deliver whichever package is closest
-            self._deliver_lowest_cost_package(pkg_tracker)  # O(n * (v + e) + (n * e)), O(n)
+            self._deliver_lowest_cost_package(pkg_tracker)
 
     # method for delivering whichever package has the lowest cost
-    # Time: O(n * (v + e) + (n * e))
-    # Space: O(n)
     def _deliver_lowest_cost_package(self, pkg_tracker):
         lowest_cost_pkg = None
         lowest_cost_path = None
         lowest_cost = math.inf
         # loop through possible packages, and figure out which is closest
-        for p in pkg_tracker:  # Time -> O(n)
+        for p in pkg_tracker:
             cost = 0
-            for edge in p[1]:  # Time -> O(v + e) in the event we have the entire graph to traverse
+            for edge in p[1]:
                 cost += edge.weight
             if cost < lowest_cost:
                 lowest_cost_pkg = p[0]
                 lowest_cost_path = p[1]
                 lowest_cost = cost
         if lowest_cost_pkg is not None:  # if closest package is found, deliver the package
-            self._deliver_package(lowest_cost_pkg, lowest_cost_path)  # O(n *  e), O(n)
+            self._deliver_package(lowest_cost_pkg, lowest_cost_path)
 
     # method for delivering a given package
-    # Time: O(n * e)
-    # Space: O(n)
     def _deliver_package(self, pkg, path_to_dest):
         # loop through edges on the way to package destination
         # calculating time and mileage for each
-        for edge in path_to_dest:  # Time -> O(e) since we are only traversing edges
+        for edge in path_to_dest:
             self.current_node = edge.first_node if edge.first_node.id is not self.current_node.id else edge.second_node
             self._calculate_time(edge.weight)
         # when we have arrived at the destination, update the package status and add to delivered packages
@@ -178,50 +155,42 @@ class DeliveryTruck:
         self.delivered_packages.append(pkg.id)
         other_packages = []
         # find other packages at this address
-        for p in self.packages:  # O(n)
+        for p in self.packages:
             if p.address == pkg.address and p.id is not pkg.id:
                 other_packages.append(p)
         # if other packages exist at this address, deliver them as well
         if other_packages is not None and len(other_packages) > 0:
-            self._deliver_other_packages(other_packages, self.current_time)  # O(n), O(n)
+            self._deliver_other_packages(other_packages, self.current_time)
 
     # method for delivering other packages that are at the same location as a given package
     # provided the package has not already been delivered
-    # Time: O(n)
-    # Space: O(n)
     def _deliver_other_packages(self, other_packages, delivery_time):
-        for p in other_packages: # O(n)
+        for p in other_packages:
             if p.id not in self.delivered_packages:
                 _update_package_status(p, delivery_time)
                 self.delivered_packages.append(p.id)
 
     # method to indicate whether we were able to find a route to a package
     # while searching, populates path_to_dest list with the shortest destination to package
-    # Time: O(v + (v * (v + e)))
-    # Space: O(v * (v + e))
     def _package_route_found(self, current_node, pkg, path_to_dest):
-        sp_node = self.graph.get_node(current_node.id)                   # O(v), O(1)
-        return self._pkg_dest_found(sp_node, pkg.address, path_to_dest)  # O(v * (v + e)), O(v * (v + e))
+        sp_node = self.graph.get_node(current_node.id)
+        return self._pkg_dest_found(sp_node, pkg.address, path_to_dest)
 
     # helper method indicates whether package destination was found
-    # Time: O(v * (v + e)) to iterate through all vertices and edges for each vertex
-    # Space: O(v * (v + e)) we will recurse into this method for each vertex on graph, while we
-    # perform this recursion, each method call will exist on call stack and potentially create a
-    # list of all vertices and edges for each vertex
     def _pkg_dest_found(self, current_node, addr, path_to_dest):
         self.visited_nodes.append(current_node.id)
         potential_paths = []
         # iterate through edges and vertices,
         # looking for location address that matches package to account for direct connection
-        for edge in current_node.edges:  # Time -> O(v + e) to traverse entire graph
+        for edge in current_node.edges:
             other_node = edge.first_node if edge.first_node.id is not current_node.id else edge.second_node
             if other_node.data.location_address == addr:
-                potential_paths.append([edge])  # in the unlikely event we append the entire graph, Space -> O(v + e)
+                potential_paths.append([edge])
                 break  # we will have at most one direct connection
         # iterate through edges and vertices,
         # recursing into this method with each new node to explore the graph
         # until graph is exhausted, and we have determined potential paths to package
-        for edge in current_node.edges:  # Time -> O(v + e) to traverse entire graph
+        for edge in current_node.edges:
             other_node = edge.first_node if edge.first_node.id is not current_node.id else edge.second_node
             if other_node.id not in self.visited_nodes:
                 current_path = []
@@ -229,12 +198,10 @@ class DeliveryTruck:
                     current_path.insert(0, edge)
                     potential_paths.append(current_path)
         # return shortest path out of all potential paths
-        return _shortest_path_found(potential_paths, path_to_dest)  # O(v + e), O(v + e)
+        return _shortest_path_found(potential_paths, path_to_dest)
 
     # method for incrementing total mileage and calculating time it took to deliver a package
     # based on a constant speed of 18mph
-    # Time: O(1)
-    # Space: O(1)
     def _calculate_time(self, weight):
         # increment total mileage
         self.total_mileage += weight

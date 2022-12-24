@@ -1,8 +1,6 @@
 from Data_Structures.Hash_Map.hash_map import HashMap
 
 
-# Time: O(1)
-# Space: O(1)
 def _validate_key_string(key):
     if isinstance(key, str) is False:
         raise ValueError("Index key must be a string")
@@ -15,8 +13,6 @@ def _validate_key_string(key):
 # based non-key attributes (like strings)
 class KeyValueIndex:
 
-    # Time: O(n) to range through # of items
-    # Space: O(n) to append empty list to hash map for each item
     def __init__(self, num_items):
         self.num_items = num_items
         self.map = HashMap(num_items)
@@ -31,8 +27,6 @@ class KeyValueIndex:
             self.data = data
 
     # used to add item to the index based on defining value or attribute
-    # Time: O(n) worst case scenario, all items share same index in hash map
-    # Space: O(1) to append a single item to the hash map
     def add_item(self, key, value):
         entry = self.DictionaryEntry(key, value)
         _validate_key_string(key)
@@ -51,8 +45,6 @@ class KeyValueIndex:
         return True
 
     # used to get item based on defining value or attribute
-    # Time: O(n) worst case scenario, all items share same index in hash map
-    # Space: O(1) to return items that already exist in the hash map
     def get_items(self, key):
         _validate_key_string(key)
         index = self._hash_string(key)
@@ -72,7 +64,5 @@ class KeyValueIndex:
     # used to create an index from a string
     # takes the absolute value of a hashed string
     # and uses the remainder after dividing by the number of items
-    # Time: O(n) to range through characters in a string
-    # Space: O(1) to return the key
     def _hash_string(self, string):
         return abs(hash(string)) % self.num_items
