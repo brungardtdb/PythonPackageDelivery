@@ -63,9 +63,9 @@ class TestPackageRepository(TestCase):
         r = repo.get_packages_by_city(city)
 
         self.assertIsNotNone(r)
-        self.assertEqual(p[0].id, r[0].id)
-        self.assertEqual(p[1].id, r[1].id)
-        self.assertEqual(p[2].id, r[2].id)
+        self.assertTrue(r[0].id == p[0].id or r[0].id == p[1].id or r[0].id == p[2].id)
+        self.assertTrue(r[1].id == p[0].id or r[1].id == p[1].id or r[1].id == p[2].id)
+        self.assertTrue(r[2].id == p[0].id or r[2].id == p[1].id or r[2].id == p[2].id)
 
     def test_repository_search_by_zip(self):
         packages = self._get_sample_packages()
@@ -100,10 +100,10 @@ class TestPackageRepository(TestCase):
 
         self.assertIsNotNone(r)
         for index in range(packages.map_length):
-            rep = r[index]
             index += 1
             pkg = packages.get_item(index)
-            self.assertEqual(rep.id, pkg.id)
+            is_in_rep = any(p.id == pkg.id for p in r)
+            self.assertTrue(is_in_rep)
 
     def test_repository_search_by_special_notes(self):
         packages = self._get_sample_packages()
