@@ -29,7 +29,8 @@ def print_table_header_for_packages():
     print("Package ID: \tDelivery Address "
           "\t\t\t\t\t\t\tDelivery Status "
           "\t\tDelivery Time "
-          "\t On Time"
+          "\t\tDelivery Deadline"
+          "\t\t On Time"
           "\t\tTruck ID")
     print()
 
@@ -45,8 +46,9 @@ def display_package_status(pkg, time):
     print("{: <11}".format(str(pkg.id)) +
           "\t\t" + "{: <40}".format(pkg.address) +
           "\t" + "{: <16}".format(s) + "\t\t" +
-          str(pkg.delivery_time) + "\t\t" +
-          "  " + str(on_time) + "\t\t\t" +
+          str(pkg.delivery_time) + "\t\t\t" +
+          "{: <17}".format(str(pkg.delivery_deadline)) + "\t\t\t" +
+          "{}".format(str(on_time)) + "\t\t\t" +
           str(pkg.truck_id))
 
 
